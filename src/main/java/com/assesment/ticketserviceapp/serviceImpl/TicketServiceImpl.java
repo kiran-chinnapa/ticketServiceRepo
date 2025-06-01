@@ -30,7 +30,7 @@ public class TicketServiceImpl implements TicketService {
         venue.put(4, new SeatObj(4));
     }
 
-    private Map<Integer, SeatHold> heldSeats = new ConcurrentHashMap<>();
+    private Map<String, SeatHold> heldSeats = new ConcurrentHashMap<>();
 
     @Override
     public int numSeatsAvailable(Optional<Integer> venueLevel) {
@@ -59,7 +59,7 @@ public class TicketServiceImpl implements TicketService {
                 seatsNeeded = numSeats - seatsHeld;
         }
         SeatHold seatHold = new SeatHold(holdSeats, customerEmail, seatHoldSeconds);
-        this.heldSeats.put(seatHold.seatHoldId(),seatHold);
+        this.heldSeats.put(seatHold.seatHoldId()+customerEmail,seatHold);
         if(numSeats - seatsHeld >0)
             log.info("sorry only "+seatsHeld+" seats are available, all other seats sold out");
 
@@ -90,11 +90,12 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public String reserveSeats(int seatHoldId, String customerEmail) {
         //get Seats based on seat hold Id
-        SeatHold seatHold = this.heldSeats.get(seatHoldId);
+        SeatHold seatHold = this.heldSeats.get(seatHoldId+customerEmail);
+        if(null== seatHold) return "Invalid seatHoldId";
         //update seats in venue as reserved and generate reservation Id
         for(Seat seat: seatHold.seats())
             updateVenueAsReserved(seat);
-
+        log.info("seats reserved for seatHoldId "+seatHoldId);
         return UUID.randomUUID().toString();
     }
 

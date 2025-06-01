@@ -5,7 +5,6 @@ import com.assesment.ticketserviceapp.model.Seat;
 import com.assesment.ticketserviceapp.model.SeatHold;
 import com.assesment.ticketserviceapp.model.SeatObj;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +18,7 @@ public class AsyncServiceImpl {
     public void checkTimerAndReleaseSeats(SeatHold seatHold, Map<Integer, SeatObj> venue, int seatHoldSeconds){
         try {
             log.info("checkTimerAndReleaseSeats thread sleeping for "+seatHoldSeconds+" seconds");
-            Thread.sleep(seatHoldSeconds);
+            Thread.sleep(1000*seatHoldSeconds);
             markHeldSeatsAsAvailable(seatHold,venue);
         } catch (InterruptedException e) {
             log.error("Exception in checkTimerAndReleaseSeats",e);
@@ -36,7 +35,10 @@ public class AsyncServiceImpl {
                     seatNumStatus.setValue(SeatStatus.AVAILABLE);
                     availableSeatCnt++;
                 }
-                if(availableSeatCnt==seat.noOfSeats()) break;
+                if(availableSeatCnt==seat.noOfSeats()) {
+                    log.info("seatHoldSeconds elapsed for "+seatHold.seatHoldId()+" marking seats as available");
+                    break;
+                }
             }
         }
     }
