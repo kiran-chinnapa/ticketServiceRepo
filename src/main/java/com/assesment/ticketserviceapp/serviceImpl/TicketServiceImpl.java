@@ -96,6 +96,7 @@ public class TicketServiceImpl implements TicketService {
         for(Seat seat: seatHold.seats())
             updateVenueAsReserved(seat);
         log.info("seats reserved for seatHoldId "+seatHoldId);
+        this.heldSeats.remove(seatHoldId+customerEmail);
         return UUID.randomUUID().toString();
     }
 
