@@ -23,7 +23,7 @@ public class AsyncServiceImplTest {
 
         SeatHold seatHold = ticketService.findAndHoldSeats(4000,Optional.of(1),Optional.of(4),"test@email");
         System.out.println(seatHold);
-        asyncService.checkTimerAndReleaseSeats(seatHold,ticketService.getVenue(),1);
+        asyncService.checkTimerAndReleaseSeats(seatHold,ticketService.getVenue(),ticketService.getHeldSeats(),1);
         Assert.isTrue(ticketService.numSeatsAvailable(Optional.of(1))==1250,"testCheckTimerAndReleaseSeats test failed");
         Assert.isTrue(ticketService.numSeatsAvailable(Optional.of(2))==2000,"testCheckTimerAndReleaseSeats test failed");
         Assert.isTrue(ticketService.numSeatsAvailable(Optional.of(3))==1500,"testCheckTimerAndReleaseSeats test failed");

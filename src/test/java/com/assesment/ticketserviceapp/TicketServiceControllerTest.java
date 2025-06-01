@@ -1,6 +1,7 @@
 package com.assesment.ticketserviceapp;
 
 import com.assesment.ticketserviceapp.controller.TicketServiceController;
+import com.assesment.ticketserviceapp.model.Seat;
 import com.assesment.ticketserviceapp.model.SeatHold;
 import com.assesment.ticketserviceapp.service.TicketService;
 import com.assesment.ticketserviceapp.validation.HoldSeatRequest;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -61,7 +63,8 @@ public class TicketServiceControllerTest {
 		request.setMaxLevel(3);
 		request.setCustomerEmail("test@email");
 
-		SeatHold mockSeatHold = new SeatHold(new ArrayList<>(),"test@email",1,10.0,1);
+		SeatHold mockSeatHold = new SeatHold(Arrays.asList(new Seat(1,"testlevel",355.0,47)),
+				"test@email",1,10.0,1);
 
 		when(ticketService.findAndHoldSeats(2,
 				Optional.of(1),
@@ -69,10 +72,14 @@ public class TicketServiceControllerTest {
 				"test@email"))
 				.thenReturn(mockSeatHold);
 
-		mockMvc.perform(post("/api/tickets/findAndHoldSeats")
+		MvcResult mvcResult= mockMvc.perform(post("/api/tickets/findAndHoldSeats")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content(objectMapper.writeValueAsString(request)))
-				.andExpect(status().isOk());
+				.andExpect(status().isOk())
+				.andReturn();
+
+		String response = mvcResult.getResponse().getContentAsString();
+		log.info("Response body: "+ response);
 	}
 
 	@Test

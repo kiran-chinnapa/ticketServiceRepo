@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.Optional;
 
 @RestController
@@ -28,7 +27,7 @@ public class TicketServiceController {
         if (level.isPresent()) {
             int value = level.get();
             if (value < 1 || value > 4) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Level must be between 1 and 4");
+                return ResponseEntity.ok("Level must be between 1 and 4");
             }
             int available = ticketService.numSeatsAvailable(level);
             return ResponseEntity.ok(String.valueOf(available));
@@ -44,6 +43,9 @@ public class TicketServiceController {
                 Optional.ofNullable(request.getMaxLevel()),
                 request.getCustomerEmail());
 
+        if(null== seatHold || null==seatHold.seats() || seatHold.seats().size()==0)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to hold seats. No seats available in this Venue");
+
         return ResponseEntity.ok(seatHold);
     }
 
@@ -52,6 +54,6 @@ public class TicketServiceController {
     public ResponseEntity<String> reserveSeats(@Valid @RequestBody ReserveSeatRequest reserveSeatRequest) {
         String confirmation = ticketService.reserveSeats(reserveSeatRequest.getSeatHoldId(),
                 reserveSeatRequest.getCustomerEmail());
-        return ResponseEntity.ok(confirmation);
+        return ResponseEntity.ok("Reservation Number: "+confirmation);
     }
 }

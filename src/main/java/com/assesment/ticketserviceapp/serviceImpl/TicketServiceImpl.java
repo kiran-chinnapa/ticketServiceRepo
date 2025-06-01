@@ -51,7 +51,8 @@ public class TicketServiceImpl implements TicketService {
         List<Seat> holdSeats = new ArrayList<>();
         for (int l = minLevel.get(); l <= maxLevel.get(); l++) {
             Seat seat = holdSeats(l, seatsNeeded);
-            holdSeats.add(seat);
+            if(seat.noOfSeats()>0)
+                holdSeats.add(seat);
             seatsHeld = seatsHeld +seat.noOfSeats();
             if (seat.noOfSeats() == numSeats)
                 break;
@@ -63,8 +64,11 @@ public class TicketServiceImpl implements TicketService {
         if(numSeats - seatsHeld >0)
             log.info("sorry only "+seatsHeld+" seats are available, all other seats sold out");
 
-        // release seats if timer expries
-        asyncService.checkTimerAndReleaseSeats(seatHold,venue,seatHoldSeconds);
+        if(seatsHeld>0){
+            // release seats if timer expries
+            asyncService.checkTimerAndReleaseSeats(seatHold,venue,heldSeats,seatHoldSeconds);
+        }
+
         return seatHold;
     }
 
@@ -114,6 +118,10 @@ public class TicketServiceImpl implements TicketService {
 
     public Map<Integer, SeatObj> getVenue() {
         return venue;
+    }
+
+    public Map<String, SeatHold> getHeldSeats() {
+        return heldSeats;
     }
 
     public void setSeatHoldSeconds(int seatHoldSeconds) {

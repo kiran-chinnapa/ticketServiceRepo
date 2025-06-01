@@ -15,18 +15,18 @@ import java.util.Map;
 public class AsyncServiceImpl {
 
     @Async
-    public void checkTimerAndReleaseSeats(SeatHold seatHold, Map<Integer, SeatObj> venue, int seatHoldSeconds){
+    public void checkTimerAndReleaseSeats(SeatHold seatHold, Map<Integer, SeatObj> venue, Map<String, SeatHold> heldSeats, int seatHoldSeconds){
         try {
             log.info("checkTimerAndReleaseSeats thread sleeping for "+seatHoldSeconds+" seconds");
             Thread.sleep(1000*seatHoldSeconds);
-            markHeldSeatsAsAvailable(seatHold,venue);
+            markHeldSeatsAsAvailable(seatHold,venue, heldSeats);
         } catch (InterruptedException e) {
             log.error("Exception in checkTimerAndReleaseSeats",e);
         }
     }
 
 
-    private void markHeldSeatsAsAvailable(SeatHold seatHold, Map<Integer, SeatObj> venue){
+    private void markHeldSeatsAsAvailable(SeatHold seatHold, Map<Integer, SeatObj> venue,Map<String, SeatHold> heldSeats){
         for(Seat seat: seatHold.seats()){
             SeatObj seatObj= venue.get(seat.levelId());
             int availableSeatCnt = 0;
@@ -36,7 +36,8 @@ public class AsyncServiceImpl {
                     availableSeatCnt++;
                 }
                 if(availableSeatCnt==seat.noOfSeats()) {
-                    log.info("seatHoldSeconds elapsed for "+seatHold.seatHoldId()+" marking seats as available");
+                    log.info("seatHoldSeconds elapsed for seatHoldId "+seatHold.seatHoldId()+", hence marking seats as available");
+                    heldSeats.remove(seatHold.seatHoldId()+seatHold.customerEmail());
                     break;
                 }
             }
