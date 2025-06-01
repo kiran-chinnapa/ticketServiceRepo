@@ -40,7 +40,7 @@ public class TicketServiceImplTest {
 
     @Test
     void reserveSeats() {
-        ticketService.setSeatHoldSeconds(60);
+        ticketService.setSeatHoldSeconds(1);
         SeatHold seatHold = ticketService.findAndHoldSeats(4000,Optional.of(2),Optional.of(4),"test@email");
         String reservationId = ticketService.reserveSeats(seatHold.seatHoldId(),"test@email");
         Assert.isTrue(null!=reservationId , "reserveSeats test failed");

@@ -61,7 +61,7 @@ public class TicketServiceControllerTest {
 		request.setMaxLevel(3);
 		request.setCustomerEmail("test@email");
 
-		SeatHold mockSeatHold = new SeatHold(new ArrayList<>(),"test@email",1,10.0,60);
+		SeatHold mockSeatHold = new SeatHold(new ArrayList<>(),"test@email",1,10.0,1);
 
 		when(ticketService.findAndHoldSeats(2,
 				Optional.of(1),
