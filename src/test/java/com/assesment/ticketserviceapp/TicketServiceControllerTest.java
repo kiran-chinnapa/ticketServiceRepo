@@ -15,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 import static org.mockito.Mockito.when;
@@ -63,7 +62,7 @@ public class TicketServiceControllerTest {
 		request.setMaxLevel(3);
 		request.setCustomerEmail("test@email");
 
-		SeatHold mockSeatHold = new SeatHold(Arrays.asList(new Seat(1,"testlevel",355.0,47)),
+		SeatHold mockSeatHold = new SeatHold(Arrays.asList(new Seat(1,"testlevel",355.0,47,Arrays.asList(1,2,3))),
 				"test@email",1,10.0,1);
 
 		when(ticketService.findAndHoldSeats(2,

@@ -77,17 +77,19 @@ public class TicketServiceImpl implements TicketService {
         double totalSeatCost =0;
         int seatsOnhold=0;
         int availableSeats= seatObj.getSeatsAvailable();
+        List<Integer> seatNumbers = new LinkedList<>();
         if(availableSeats>0){
             for(Map.Entry<Integer,String> seatNumStatus: seatObj.getSeatDetail().entrySet()){
                 if(SeatStatus.AVAILABLE.equals(seatNumStatus.getValue())){
                     seatNumStatus.setValue(SeatStatus.ON_HOLD);
+                    seatNumbers.add(seatNumStatus.getKey());
                     seatsOnhold++;
                     totalSeatCost = totalSeatCost+ seatObj.getPricePerSeat();
                 }
                 if(seatsOnhold ==seatsNeeded) break;
             }
         }
-        return new Seat(level,seatObj.getLevelName(),totalSeatCost,seatsOnhold);
+        return new Seat(level,seatObj.getLevelName(),totalSeatCost,seatsOnhold, seatNumbers);
     }
 
 
@@ -108,7 +110,8 @@ public class TicketServiceImpl implements TicketService {
         SeatObj seatObj= venue.get(seat.levelId());
         int reserveSeatCnt = 0;
         for(Map.Entry<Integer,String> seatNumStatus: seatObj.getSeatDetail().entrySet()){
-            if(SeatStatus.ON_HOLD.equals(seatNumStatus.getValue())){
+            if(seat.seatNumbers().contains(seatNumStatus.getKey())
+            && SeatStatus.ON_HOLD.equals(seatNumStatus.getValue())){
                 seatNumStatus.setValue(SeatStatus.RESERVED);
                 reserveSeatCnt++;
             }
