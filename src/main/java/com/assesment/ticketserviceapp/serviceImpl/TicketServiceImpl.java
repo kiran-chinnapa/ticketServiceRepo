@@ -50,6 +50,8 @@ public class TicketServiceImpl implements TicketService {
         int seatsNeeded = numSeats;
         List<Seat> holdSeats = new ArrayList<>();
         for (int l = minLevel.get(); l <= maxLevel.get(); l++) {
+            if(numSeats == seatsHeld)
+                break;
             Seat seat = holdSeats(l, seatsNeeded);
             if(seat.noOfSeats()>0)
                 holdSeats.add(seat);
